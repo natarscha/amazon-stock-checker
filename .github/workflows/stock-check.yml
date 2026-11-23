@@ -1,1 +1,30 @@
 
+name: Amazon Stock Checker
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */4 * * *"
+
+jobs:
+  check-stock:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Check Amazon inventory
+        env:
+          CLOUDFLARE_ENDPOINT: ${{ secrets.CLOUDFLARE_ENDPOINT }}
+          STOCK_SYNC_TOKEN: ${{ secrets.STOCK_SYNC_TOKEN }}
+        run: python check_stock.py
+
